@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growtopia - Dashboard</title>
+    <title>GTLYY/GROWLY - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -79,9 +79,9 @@
                 document.getElementById('errorDiv').classList.remove('hidden');
                 document.getElementById('errorMessage').innerHTML = 'Username or Password is empty';
                 return;
-            } else if (uName.length < 4 || uPass.length < 4) {
+            } else if (uName.length < 3 || uPass.length < 3) {
                 document.getElementById('errorDiv').classList.remove('hidden');
-                document.getElementById('errorMessage').innerHTML = 'Username or Password must be at least 4 characters long';
+                document.getElementById('errorMessage').innerHTML = 'Username or Password must be at least 3 characters long';
                 return;
             } else {
                 loginForm.submit();
