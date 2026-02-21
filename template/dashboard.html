@@ -10,7 +10,7 @@
             margin: 0;
             padding: 20px;
             font-family: Arial, sans-serif;
-            background: #f0f2f5;
+            background: transparent;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,7 +23,6 @@
             border: 4px solid #87b8cc;
             border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         
         .title {
@@ -178,7 +177,7 @@
         <!-- Info Box - Register Notice -->
         <div class="info-box">
             <i class="fas fa-info-circle"></i>
-            <span>Kosongkan kedua form jika ingin Register akun baru</span>
+            <span>Leave both fields empty if you want to register a new account</span>
         </div>
         
         <!-- Error Box -->
@@ -196,27 +195,27 @@
                 <label><i class="fas fa-user" style="margin-right: 5px;"></i> GrowID</label>
                 <div class="input-wrapper">
                     <i class="fas fa-user"></i>
-                    <input type="text" name="growId" id="loginGrowId" placeholder="Kosongkan untuk Register">
+                    <input type="text" name="growId" id="loginGrowId" placeholder="Leave empty to register">
                 </div>
-                <div class="hint">Minimal 3 karakter jika diisi</div>
+                <div class="hint">Minimum 3 characters if filled</div>
             </div>
             
             <div class="form-group">
                 <label><i class="fas fa-lock" style="margin-right: 5px;"></i> Password</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="password" id="loginPassword" placeholder="Kosongkan untuk Register">
+                    <input type="password" name="password" id="loginPassword" placeholder="Leave empty to register">
                     <button type="button" id="togglePassword" class="toggle-password">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
-                <div class="hint">Minimal 3 karakter jika diisi</div>
+                <div class="hint">Minimum 3 characters if filled</div>
             </div>
             
             <div class="button-container">
                 <div class="register-note">
                     <i class="fas fa-check-circle"></i> 
-                    Register? Kosongin aja
+                    New here? Leave fields empty
                 </div>
                 <button type="button" id="loginButton" class="login-btn">
                     <i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i> 
@@ -268,14 +267,14 @@
             // Case 2: One filled, one empty - ERROR
             if ((growId === '' && password !== '') || (growId !== '' && password === '')) {
                 errorBox.style.display = 'block';
-                errorMessage.innerHTML = 'Isi kedua form untuk login, atau kosongkan kedua form untuk register';
+                errorMessage.innerHTML = 'Fill both fields to login, or leave both empty to register';
                 return;
             }
             
             // Case 3: Both filled - check length
             if (growId.length < 3 || password.length < 3) {
                 errorBox.style.display = 'block';
-                errorMessage.innerHTML = 'GrowID dan Password minimal 3 karakter';
+                errorMessage.innerHTML = 'GrowID and Password must be at least 3 characters';
                 return;
             }
             
