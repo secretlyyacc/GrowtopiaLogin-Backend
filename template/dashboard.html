@@ -1,239 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GTLYY/GROWLY - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>GTLYY/GROWLY - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         
-        .modal-container {
-            animation: float 6s ease-in-out infinite;
+        .login-container {
+            width: 450px;
+            background: #2b4d6d;
+            border: 4px solid #87b8cc;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        .title {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
         }
         
-        .input-field:focus {
-            box-shadow: 0 0 0 3px rgba(0, 184, 255, 0.3);
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
         }
         
-        .info-banner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .info-box i {
+            color: #2196f3;
+            margin-right: 8px;
+        }
+        
+        .info-box span {
+            color: #0d47a1;
+            font-size: 14px;
+        }
+        
+        .error-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .error-box i {
+            color: #f44336;
+            margin-right: 8px;
+        }
+        
+        .error-box span {
+            color: #b71c1c;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: #2b4d6d;
+            border: 2px solid #81d4fa;
+            border-radius: 6px;
+            padding: 8px 12px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-wrapper:hover {
+            border-color: #00b8ff;
+        }
+        
+        .input-wrapper i {
+            color: white;
+            font-size: 14px;
+            margin-right: 10px;
+            width: 16px;
+        }
+        
+        .input-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .input-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .toggle-password {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 5px;
+        }
+        
+        .toggle-password:hover {
+            color: #00b8ff;
+        }
+        
+        .hint {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            margin-top: 4px;
+            margin-left: 5px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+        }
+        
+        .register-note {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+        }
+        
+        .register-note i {
+            margin-right: 4px;
+            color: #4caf50;
+        }
+        
+        .login-btn {
+            background: #00b8ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #0095cc;
         }
     </style>
 </head>
-
-<body class="flex items-center justify-center min-h-screen p-4">
-    <!-- Background dengan efek blur -->
-    <div class="fixed inset-0 overflow-hidden">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div class="absolute top-40 left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-    </div>
-
-    <!-- Main Container -->
-    <div class="relative w-full max-w-2xl mx-auto">
-        <!-- Info Banner -->
-        <div class="info-banner text-white p-6 rounded-t-2xl shadow-2xl">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold">Welcome to GTLYY/GROWLY</h1>
-                    <p class="text-lg opacity-90 mt-2">Your trusted Growtopia server</p>
-                </div>
-                <div class="text-right">
-                    <i class="fas fa-cube text-5xl opacity-50"></i>
-                </div>
-            </div>
-            
-            <!-- Info Registration -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-white/10 backdrop-blur-lg rounded-lg p-4">
-                    <i class="fas fa-info-circle text-xl mb-2"></i>
-                    <h3 class="font-semibold text-lg">New Player?</h3>
-                    <p class="text-sm opacity-90">Leave both fields empty and click Login to register!</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-lg rounded-lg p-4">
-                    <i class="fas fa-check-circle text-xl mb-2"></i>
-                    <h3 class="font-semibold text-lg">Existing Player</h3>
-                    <p class="text-sm opacity-90">Fill in your GrowID and password (min 3 chars)</p>
-                </div>
-            </div>
+<body>
+    <div class="login-container">
+        <div class="title">Log in with your Grow ID</div>
+        
+        <!-- Info Box - Register Notice -->
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <span>Kosongkan kedua form jika ingin Register akun baru</span>
+        </div>
+        
+        <!-- Error Box -->
+        <div id="errorBox" class="error-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage"></span>
         </div>
 
-        <!-- Login Modal -->
-        <div id="loginModal"
-            class="relative bg-[#2b4d6d] border-4 border-[#87b8cc] shadow-2xl p-8 w-full rounded-b-2xl modal-container">
+        <!-- Login Form -->
+        <form method="post" action="/player/growid/login/validate" accept-charset="UTF-8" id="loginForm">
+            <input name="type" value="log" type="hidden" />
+            <input name="_token" value="{{ data }}" type="hidden" />
             
-            <p class="text-white text-center font-bold text-3xl mb-6">Log in with your Grow ID</p>
+            <div class="form-group">
+                <label><i class="fas fa-user" style="margin-right: 5px;"></i> GrowID</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="growId" id="loginGrowId" placeholder="Kosongkan untuk Register">
+                </div>
+                <div class="hint">Minimal 3 karakter jika diisi</div>
+            </div>
             
-            <!-- Error Message -->
-            <div id="errorDiv" class="hidden mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                <span id="errorMessage" class="font-medium"></span>
-            </div>
-
-            <!-- Info Message -->
-            <div id="infoDiv" class="mb-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg">
-                <i class="fas fa-info-circle mr-2"></i>
-                <span class="font-medium">Fields are optional. Empty fields = register new account</span>
-            </div>
-
-            <!-- Login Form -->
-            <form method="post" action="/player/growid/login/validate" accept-charset="UTF-8" id="loginForm">
-                <div class="mb-4">
-                    <input name="type" value="log" type="hidden" />
-                    <input name="_token" value="{{ data }}" type="hidden" />
-                    
-                    <label for="loginGrowId" class="block text-white text-sm font-medium mb-2">
-                        <i class="fas fa-user mr-2"></i>GrowID (Optional)
-                    </label>
-                    <div class="flex items-center border-2 border-[#81d4fa] rounded-lg bg-[#2b4d6d] px-3 py-2 transition-all hover:border-[#00b8ff]">
-                        <i class="fas fa-user text-white mr-2"></i>
-                        <input type="text" name="growId" id="loginGrowId"
-                            class="w-full bg-[#2b4d6d] text-white text-sm placeholder-white/70 focus:outline-none input-field"
-                            placeholder="Leave empty to register">
-                    </div>
-                    <p class="text-white/50 text-xs mt-1 ml-1">Min 3 chars if filled</p>
-                </div>
-
-                <div class="mb-6">
-                    <label for="loginPassword" class="block text-white text-sm font-medium mb-2">
-                        <i class="fas fa-lock mr-2"></i>Password (Optional)
-                    </label>
-                    <div class="flex items-center border-2 border-[#81d4fa] rounded-lg bg-[#2b4d6d] px-3 py-2 transition-all hover:border-[#00b8ff]">
-                        <i class="fas fa-lock text-white mr-2"></i>
-                        <input type="password" name="password" id="loginPassword"
-                            class="w-full bg-[#2b4d6d] text-white text-sm placeholder-white/70 focus:outline-none input-field"
-                            placeholder="Leave empty to register">
-                        <button type="button" id="toggleLogPassword" class="text-white ml-2 hover:text-[#00b8ff] transition-colors">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <p class="text-white/50 text-xs mt-1 ml-1">Min 3 chars if filled</p>
-                </div>
-
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div class="text-white/70 text-sm">
-                        <i class="fas fa-question-circle mr-1"></i>
-                        New here? Just click Login!
-                    </div>
-                    <button id="loginButton"
-                        class="px-8 py-3 rounded-lg bg-gradient-to-r from-[#00b8ff] to-[#764ba2] text-white font-semibold text-sm hover:from-[#06a4dd] hover:to-[#5a3d7a] transition-all duration-300 transform hover:scale-105 shadow-lg">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Login / Register
+            <div class="form-group">
+                <label><i class="fas fa-lock" style="margin-right: 5px;"></i> Password</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" id="loginPassword" placeholder="Kosongkan untuk Register">
+                    <button type="button" id="togglePassword" class="toggle-password">
+                        <i class="fas fa-eye"></i>
                     </button>
                 </div>
-            </form>
-
-            <!-- Additional Info -->
-            <div class="mt-6 pt-4 border-t border-white/20 text-center">
-                <p class="text-white/50 text-xs">
-                    <i class="fas fa-shield-alt mr-1"></i>
-                    Your information is secure with us
-                </p>
+                <div class="hint">Minimal 3 karakter jika diisi</div>
             </div>
-        </div>
+            
+            <div class="button-container">
+                <div class="register-note">
+                    <i class="fas fa-check-circle"></i> 
+                    Register? Kosongin aja
+                </div>
+                <button type="button" id="loginButton" class="login-btn">
+                    <i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i> 
+                    Login / Register
+                </button>
+            </div>
+        </form>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Load saved GrowID
-            const savedGrowId = localStorage.getItem('growId');
-            if (savedGrowId) {
-                document.getElementById('loginGrowId').value = savedGrowId;
-            }
-
-            // Show info message after 2 seconds
-            setTimeout(() => {
-                const infoDiv = document.getElementById('infoDiv');
-                infoDiv.classList.remove('hidden');
-            }, 2000);
-        });
-
-        // Toggle password visibility
-        document.getElementById('toggleLogPassword').addEventListener('click', function () {
-            const passwordField = document.getElementById('loginPassword');
-            const type = passwordField.getAttribute('type');
+        // Toggle Password Visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('loginPassword');
+            const icon = this.querySelector('i');
             
-            if (type === 'password') {
-                passwordField.setAttribute('type', 'text');
-                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
             } else {
-                passwordField.setAttribute('type', 'password');
-                this.innerHTML = '<i class="fas fa-eye"></i>';
+                passwordInput.type = 'password';
+                icon.className = 'fas fa-eye';
             }
         });
 
-        // Handle login button click
-        document.getElementById('loginButton').addEventListener('click', function (event) {
-            event.preventDefault();
+        // Load saved GrowID
+        const savedGrowId = localStorage.getItem('growId');
+        if (savedGrowId) {
+            document.getElementById('loginGrowId').value = savedGrowId;
+        }
 
+        // Login Button Handler
+        document.getElementById('loginButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
             const growId = document.getElementById('loginGrowId').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
-            const errorDiv = document.getElementById('errorDiv');
+            const errorBox = document.getElementById('errorBox');
             const errorMessage = document.getElementById('errorMessage');
-
-            // Reset error
-            errorDiv.classList.add('hidden');
-
-            // Case 1: Both fields empty - REGISTER
+            
+            // Hide error box initially
+            errorBox.style.display = 'none';
+            
+            // Case 1: Both empty - REGISTER
             if (growId === '' && password === '') {
-                console.log('Register mode - empty fields');
                 document.getElementById('loginForm').submit();
                 return;
             }
-
-            // Case 2: One field empty but not both
+            
+            // Case 2: One filled, one empty - ERROR
             if ((growId === '' && password !== '') || (growId !== '' && password === '')) {
-                errorDiv.classList.remove('hidden');
-                errorMessage.innerHTML = 'Please fill both fields for login, or leave both empty for register';
+                errorBox.style.display = 'block';
+                errorMessage.innerHTML = 'Isi kedua form untuk login, atau kosongkan kedua form untuk register';
                 return;
             }
-
-            // Case 3: Both fields filled - check length
+            
+            // Case 3: Both filled - check length
             if (growId.length < 3 || password.length < 3) {
-                errorDiv.classList.remove('hidden');
-                errorMessage.innerHTML = 'If filling fields, both must be at least 3 characters long';
+                errorBox.style.display = 'block';
+                errorMessage.innerHTML = 'GrowID dan Password minimal 3 karakter';
                 return;
             }
-
+            
             // Case 4: Valid login
             localStorage.setItem('growId', growId);
             document.getElementById('loginForm').submit();
         });
-
-        // Add animation styles
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes blob {
-                0% { transform: translate(0px, 0px) scale(1); }
-                33% { transform: translate(30px, -50px) scale(1.1); }
-                66% { transform: translate(-20px, 20px) scale(0.9); }
-                100% { transform: translate(0px, 0px) scale(1); }
-            }
-            .animate-blob {
-                animation: blob 7s infinite;
-            }
-            .animation-delay-2000 {
-                animation-delay: 2s;
-            }
-            .animation-delay-4000 {
-                animation-delay: 4s;
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
-
 </html>
