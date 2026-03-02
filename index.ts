@@ -18,8 +18,8 @@ app.use(cors({
     credentials: true
 }));
 
-// @note handle preflight OPTIONS requests
-app.options('*', cors());
+// @note GANTI INI: Hapus app.options('*', cors()) dan ganti dengan route spesifik
+// Biar cors() handle OPTIONS secara otomatis
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -33,7 +33,9 @@ const limiter = rateLimit({
   validate: { trustProxy: false, xForwardedForHeader: false },
   keyGenerator: (req) => {
     return req.headers['x-forwarded-for']?.toString() || req.socket.remoteAddress || 'unknown';
-  }
+  },
+  // @note skip failed requests biar ga crash
+  skip: (req) => req.method === 'OPTIONS'
 });
 app.use(limiter);
 
@@ -170,7 +172,7 @@ app.all(
 );
 
 /**
- * @note first checktoken endpoint - redirects using 307 to preserve data
+ * @note first checktoken endpoint - gak pake redirect lagi biar aman di Vercel
  * @param req - express request with refreshToken and clientData
  * @param res - express response with updated token
  */
@@ -179,101 +181,74 @@ app.all('/player/growid/checktoken', async (req: Request, res: Response) => {
   console.log('[CHECKTOKEN1] Body:', req.body);
   console.log('[CHECKTOKEN1] Query:', req.query);
   
-  // @note preserve body data when redirecting
-  if (req.method === 'POST') {
-    // Forward the request instead of redirecting
-    try {
-      const response = await fetch('http://localhost:3000/player/growid/validate/checktoken', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(req.body)
-      });
-      
-      const data = await response.json();
-      res.json(data);
-    } catch (error) {
-      console.log('[ERROR] Forward failed:', error);
-      res.status(500).json({
+  // @note langsung forward ke logic yang sama
+  try {
+    // @note handle both { data: { ... } } and { refreshToken, clientData } formats
+    const body = req.body as
+      | { data: { refreshToken: string; clientData: string } }
+      | { refreshToken: string; clientData: string };
+
+    let refreshToken: string | undefined;
+    let clientData: string | undefined;
+
+    if ('data' in body && body.data) {
+      refreshToken = body.data?.refreshToken;
+      clientData = body.data?.clientData;
+    } else {
+      refreshToken = (body as any).refreshToken;
+      clientData = (body as any).clientData;
+    }
+
+    // @note juga cek query params untuk GET requests
+    if (!refreshToken && req.query.refreshToken) {
+      refreshToken = req.query.refreshToken as string;
+    }
+    if (!clientData && req.query.clientData) {
+      clientData = req.query.clientData as string;
+    }
+
+    if (!refreshToken || !clientData) {
+      return res.status(400).json({
         status: 'error',
-        message: 'Internal Server Error'
+        message: 'Missing refreshToken or clientData',
       });
     }
-  } else {
-    return res.redirect(307, '/player/growid/validate/checktoken');
+
+    let decodeRefreshToken = Buffer.from(refreshToken, 'base64').toString(
+      'utf-8',
+    );
+
+    const newToken = Buffer.from(
+      decodeRefreshToken.replace(
+        /(_token=)[^&]*/,
+        `$1${Buffer.from(clientData).toString('base64')}`,
+      ),
+    ).toString('base64');
+
+    res.json({
+      status: 'success',
+      message: 'Token is valid.',
+      token: newToken,
+      url: '',
+      accountType: 'growtopia'
+    });
+  } catch (error) {
+    console.log(`[ERROR]: ${error}`);
+    res.status(500).json({
+      status: 'error',
+      message: 'Internal Server Error',
+    });
   }
 });
 
 /**
- * @note second checktoken endpoint - validates token and returns updated token
- * @param req - express request with refreshToken and clientData
- * @param res - express response with updated token
+ * @note second checktoken endpoint - biarin aja, tapi bakal jarang dipake
  */
 app.all(
   '/player/growid/validate/checktoken',
   async (req: Request, res: Response) => {
-    try {
-      console.log('[CHECKTOKEN2] Request received:', req.method);
-      console.log('[CHECKTOKEN2] Body:', req.body);
-      console.log('[CHECKTOKEN2] Query:', req.query);
-      
-      // @note handle both { data: { ... } } and { refreshToken, clientData } formats
-      const body = req.body as
-        | { data: { refreshToken: string; clientData: string } }
-        | { refreshToken: string; clientData: string };
-
-      let refreshToken: string | undefined;
-      let clientData: string | undefined;
-
-      if ('data' in body && body.data) {
-        refreshToken = body.data?.refreshToken;
-        clientData = body.data?.clientData;
-      } else {
-        refreshToken = (body as any).refreshToken;
-        clientData = (body as any).clientData;
-      }
-
-      // @note juga cek query params untuk GET requests
-      if (!refreshToken && req.query.refreshToken) {
-        refreshToken = req.query.refreshToken as string;
-      }
-      if (!clientData && req.query.clientData) {
-        clientData = req.query.clientData as string;
-      }
-
-      if (!refreshToken || !clientData) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Missing refreshToken or clientData',
-        });
-      }
-
-      let decodeRefreshToken = Buffer.from(refreshToken, 'base64').toString(
-        'utf-8',
-      );
-
-      const newToken = Buffer.from(
-        decodeRefreshToken.replace(
-          /(_token=)[^&]*/,
-          `$1${Buffer.from(clientData).toString('base64')}`,
-        ),
-      ).toString('base64');
-
-      res.json({
-        status: 'success',
-        message: 'Token is valid.',
-        token: newToken,
-        url: '',
-        accountType: 'growtopia'
-      });
-    } catch (error) {
-      console.log(`[ERROR]: ${error}`);
-      res.status(500).json({
-        status: 'error',
-        message: 'Internal Server Error',
-      });
-    }
+    // @note redirect ke endpoint utama
+    res.redirect(307, '/player/growid/checktoken');
   },
 );
 
@@ -294,9 +269,13 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[SERVER] Running on http://0.0.0.0:${PORT}`);
-  console.log(`[SERVER] Local: http://localhost:${PORT}`);
-});
-
+// @note untuk Vercel, export app instead of listening
 export default app;
+
+// @note kalo jalan lokal, pake ini
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[SERVER] Running on http://0.0.0.0:${PORT}`);
+    console.log(`[SERVER] Local: http://localhost:${PORT}`);
+  });
+}
